@@ -1,0 +1,30 @@
+package tv.danmaku.bili.ui.main2.basic.dialog.publish;
+
+import kotlin.Metadata;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.jvm.internal.ContinuationImpl;
+import kotlin.coroutines.jvm.internal.DebugMetadata;
+import tv.danmaku.bili.BR;
+
+/* JADX INFO: Access modifiers changed from: package-private */
+/* compiled from: PublishBubbleDialog.kt */
+@Metadata(k = 3, mv = {2, 0, 0}, xi = BR.badgeVisibility)
+@DebugMetadata(c = "tv.danmaku.bili.ui.main2.basic.dialog.publish.PublishBubbleDialogKt", f = "PublishBubbleDialog.kt", i = {0, 0, 0}, l = {BR.danmakuOpen}, m = "showPublishBubble", n = {"anchor", "tabUrl", "addMainDialogManager"}, s = {"L$0", "L$1", "Z$0"}, v = 1)
+public final class PublishBubbleDialogKt$showPublishBubble$1 extends ContinuationImpl {
+    Object L$0;
+    Object L$1;
+    boolean Z$0;
+    int label;
+    /* synthetic */ Object result;
+
+    /* JADX INFO: Access modifiers changed from: package-private */
+    public PublishBubbleDialogKt$showPublishBubble$1(Continuation<? super PublishBubbleDialogKt$showPublishBubble$1> continuation) {
+        super(continuation);
+    }
+
+    public final Object invokeSuspend(Object obj) {
+        this.result = obj;
+        this.label |= Integer.MIN_VALUE;
+        return PublishBubbleDialogKt.showPublishBubble(null, null, false, (Continuation) this);
+    }
+}

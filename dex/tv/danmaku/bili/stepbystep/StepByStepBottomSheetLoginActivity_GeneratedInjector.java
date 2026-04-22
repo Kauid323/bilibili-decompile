@@ -1,0 +1,5 @@
+package tv.danmaku.bili.stepbystep;
+
+public interface StepByStepBottomSheetLoginActivity_GeneratedInjector {
+    void injectStepByStepBottomSheetLoginActivity(StepByStepBottomSheetLoginActivity stepByStepBottomSheetLoginActivity);
+}

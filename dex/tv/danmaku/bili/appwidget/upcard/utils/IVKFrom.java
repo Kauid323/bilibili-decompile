@@ -1,0 +1,33 @@
+package tv.danmaku.bili.appwidget.upcard.utils;
+
+import kotlin.Metadata;
+import kotlin.enums.EnumEntries;
+import kotlin.enums.EnumEntriesKt;
+import tv.danmaku.bili.BR;
+
+/* compiled from: RouterUtil.kt */
+@Metadata(d1 = {"\u0000\u0012\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0000\n\u0002\u0010\u000e\n\u0002\b\f\b\u0086\u0081\u0002\u0018\u00002\b\u0012\u0004\u0012\u00020\u00000\u0001B\u0011\b\u0002\u0012\u0006\u0010\u0002\u001a\u00020\u0003¢\u0006\u0004\b\u0004\u0010\u0005R\u0011\u0010\u0002\u001a\u00020\u0003¢\u0006\b\n\u0000\u001a\u0004\b\u0006\u0010\u0007j\u0002\b\bj\u0002\b\tj\u0002\b\nj\u0002\b\u000bj\u0002\b\fj\u0002\b\rj\u0002\b\u000e¨\u0006\u000f"}, d2 = {"Ltv/danmaku/bili/appwidget/upcard/utils/IVKFrom;", "", "value", "", "<init>", "(Ljava/lang/String;ILjava/lang/String;)V", "getValue", "()Ljava/lang/String;", "UP_SINGLE_PLUGIN", "UP_SINGLE_PLUGIN_V2", "UP_DOUBLE_WIDGET_CARD", "UP_NO_LOGIN_WIDGET_CARD", "UP_NO_UPDATE_WIDGET_CARD", "UP_TEEN_MODE_WIDGET_CARD", "UP_LESSON_MODE_WIDGET_CARD", "core_apinkDebug"}, k = 1, mv = {2, 0, 0}, xi = BR.badgeVisibility)
+public enum IVKFrom {
+    UP_SINGLE_PLUGIN("widget-follow-single"),
+    UP_SINGLE_PLUGIN_V2(RouterUtilKt.IVK_FROM_WIDGET_UP_SINGLE_V2),
+    UP_DOUBLE_WIDGET_CARD("widget-follow-double"),
+    UP_NO_LOGIN_WIDGET_CARD(RouterUtilKt.IVK_FORM_WIDGET_UP_NO_LOGIN),
+    UP_NO_UPDATE_WIDGET_CARD(RouterUtilKt.IVK_FORM_WIDGET_UP_NO_UPDATE),
+    UP_TEEN_MODE_WIDGET_CARD(RouterUtilKt.IVK_FORM_WIDGET_UP_TEEN_MODE),
+    UP_LESSON_MODE_WIDGET_CARD(RouterUtilKt.IVK_FORM_WIDGET_UP_LESSON_MODE);
+    
+    private final String value;
+    private static final /* synthetic */ EnumEntries $ENTRIES = EnumEntriesKt.enumEntries($VALUES);
+
+    public static EnumEntries<IVKFrom> getEntries() {
+        return $ENTRIES;
+    }
+
+    IVKFrom(String value) {
+        this.value = value;
+    }
+
+    public final String getValue() {
+        return this.value;
+    }
+}

@@ -1,0 +1,121 @@
+package tv.danmaku.ijk.media.player.render.core;
+
+import android.opengl.GLES20;
+import android.opengl.Matrix;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import tv.danmaku.android.log.BLog;
+
+public class IjkGLUtils {
+    public static final float[] IDENTITY_MATRIX = new float[16];
+    private static final int SIZEOF_FLOAT = 4;
+    public static final String TAG = "IjkEgl";
+
+    static {
+        Matrix.setIdentityM(IDENTITY_MATRIX, 0);
+    }
+
+    private IjkGLUtils() {
+    }
+
+    public static int createProgram(String vertexSource, String fragmentSource) {
+        int pixelShader;
+        int vertexShader = loadShader(35633, vertexSource);
+        if (vertexShader == 0 || (pixelShader = loadShader(35632, fragmentSource)) == 0) {
+            return 0;
+        }
+        int program = GLES20.glCreateProgram();
+        checkGlError("glCreateProgram");
+        if (program == 0) {
+            BLog.e(TAG, "Could not create program");
+        }
+        GLES20.glAttachShader(program, vertexShader);
+        checkGlError("glAttachShader");
+        GLES20.glAttachShader(program, pixelShader);
+        checkGlError("glAttachShader");
+        GLES20.glLinkProgram(program);
+        int[] linkStatus = new int[1];
+        GLES20.glGetProgramiv(program, 35714, linkStatus, 0);
+        if (linkStatus[0] != 1) {
+            BLog.e(TAG, "Could not link program: ");
+            BLog.e(TAG, GLES20.glGetProgramInfoLog(program));
+            GLES20.glDeleteProgram(program);
+            return 0;
+        }
+        return program;
+    }
+
+    public static int loadShader(int shaderType, String source) {
+        int shader = GLES20.glCreateShader(shaderType);
+        checkGlError("glCreateShader type=" + shaderType);
+        GLES20.glShaderSource(shader, source);
+        GLES20.glCompileShader(shader);
+        int[] compiled = new int[1];
+        GLES20.glGetShaderiv(shader, 35713, compiled, 0);
+        if (compiled[0] == 0) {
+            BLog.e(TAG, "Could not compile shader " + shaderType + ":");
+            BLog.e(TAG, " " + GLES20.glGetShaderInfoLog(shader));
+            GLES20.glDeleteShader(shader);
+            return 0;
+        }
+        return shader;
+    }
+
+    public static void checkGlError(String op) {
+        int error = GLES20.glGetError();
+        if (error != 0) {
+            String msg = "[PlayProblem] " + op + ": ijkExternalRenderError=glError 0x" + Integer.toHexString(error);
+            BLog.e(TAG, msg);
+        }
+    }
+
+    public static void checkLocation(int location, String label) {
+        if (location < 0) {
+            BLog.e(TAG, "Unable to locate '" + label + "' in program");
+        }
+    }
+
+    public static int genOESTexture() {
+        int[] textures = new int[1];
+        GLES20.glGenTextures(1, textures, 0);
+        checkGlError("glGenTextures");
+        int texId = textures[0];
+        GLES20.glBindTexture(36197, texId);
+        checkGlError("glBindTexture " + texId);
+        GLES20.glTexParameteri(36197, 10241, 9729);
+        GLES20.glTexParameteri(36197, 10240, 9728);
+        GLES20.glTexParameteri(36197, 10242, 33071);
+        GLES20.glTexParameteri(36197, 10243, 33071);
+        return texId;
+    }
+
+    public static int createImageTexture(ByteBuffer data, int width, int height, int format) {
+        int[] textureHandles = new int[1];
+        GLES20.glGenTextures(1, textureHandles, 0);
+        int textureHandle = textureHandles[0];
+        checkGlError("glGenTextures");
+        GLES20.glBindTexture(3553, textureHandle);
+        GLES20.glTexParameteri(3553, 10241, 9729);
+        GLES20.glTexParameteri(3553, 10240, 9729);
+        checkGlError("loadImageTexture");
+        GLES20.glTexImage2D(3553, 0, format, width, height, 0, format, 5121, data);
+        checkGlError("loadImageTexture");
+        return textureHandle;
+    }
+
+    public static FloatBuffer createFloatBuffer(float[] coords) {
+        ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        FloatBuffer fb = bb.asFloatBuffer();
+        fb.put(coords);
+        fb.position(0);
+        return fb;
+    }
+
+    public static void logVersionInfo() {
+        BLog.i(TAG, "vendor  : " + GLES20.glGetString(7936));
+        BLog.i(TAG, "renderer: " + GLES20.glGetString(7937));
+        BLog.i(TAG, "version : " + GLES20.glGetString(7938));
+    }
+}
