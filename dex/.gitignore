@@ -8,14 +8,10 @@ androidx/
 android/
 base/
 cn/
-cmbapi/
-external/
-kotlin/
 kotlinx/
 retrofit2/
 settings
 org/
-nl/
 me/
 kntr/
 im/
@@ -25,7 +21,6 @@ faceverify/
 dagger/
 com/
 andruid/
-c/
 defpackage/
 hilt_aggregated_deps/
 gripper/
