@@ -1,0 +1,8 @@
+package im.contact.model;
+
+import kotlin.Metadata;
+
+/* compiled from: IMContactAction.kt */
+@Metadata(d1 = {"\u0000&\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bv\u0018\u00002\u00020\u0001\u0082\u0001\u0007\u0002\u0003\u0004\u0005\u0006\u0007\b¨\u0006\tÀ\u0006\u0003"}, d2 = {"Lim/contact/model/IMContactAction;", "", "Lim/contact/model/IMContactActionEnterSearch;", "Lim/contact/model/IMContactActionExitSearch;", "Lim/contact/model/IMContactActionLoadMore;", "Lim/contact/model/IMContactActionSearch;", "Lim/contact/model/IMContactActionTabChange;", "Lim/contact/model/IMContactOnContactClick;", "Lim/contact/model/IMContactRefresh;", "contact_debug"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public interface IMContactAction {
+}

@@ -1,0 +1,259 @@
+package io.reactivex.rxjava3.internal.operators.mixed;
+
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableSubscriber;
+import io.reactivex.rxjava3.core.MaybeObserver;
+import io.reactivex.rxjava3.core.MaybeSource;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.exceptions.Exceptions;
+import io.reactivex.rxjava3.exceptions.MissingBackpressureException;
+import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.internal.disposables.DisposableHelper;
+import io.reactivex.rxjava3.internal.fuseable.SimplePlainQueue;
+import io.reactivex.rxjava3.internal.queue.SpscArrayQueue;
+import io.reactivex.rxjava3.internal.subscriptions.SubscriptionHelper;
+import io.reactivex.rxjava3.internal.util.AtomicThrowable;
+import io.reactivex.rxjava3.internal.util.BackpressureHelper;
+import io.reactivex.rxjava3.internal.util.ErrorMode;
+import j$.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
+public final class FlowableConcatMapMaybe<T, R> extends Flowable<R> {
+    final ErrorMode errorMode;
+    final Function<? super T, ? extends MaybeSource<? extends R>> mapper;
+    final int prefetch;
+    final Flowable<T> source;
+
+    public FlowableConcatMapMaybe(Flowable<T> source, Function<? super T, ? extends MaybeSource<? extends R>> mapper, ErrorMode errorMode, int prefetch) {
+        this.source = source;
+        this.mapper = mapper;
+        this.errorMode = errorMode;
+        this.prefetch = prefetch;
+    }
+
+    @Override // io.reactivex.rxjava3.core.Flowable
+    protected void subscribeActual(Subscriber<? super R> s) {
+        this.source.subscribe((FlowableSubscriber) new ConcatMapMaybeSubscriber(s, this.mapper, this.prefetch, this.errorMode));
+    }
+
+    /* loaded from: /data/np/file-convert/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5.dex */
+    static final class ConcatMapMaybeSubscriber<T, R> extends AtomicInteger implements FlowableSubscriber<T>, Subscription {
+        static final int STATE_ACTIVE = 1;
+        static final int STATE_INACTIVE = 0;
+        static final int STATE_RESULT_VALUE = 2;
+        private static final long serialVersionUID = -9140123220065488293L;
+        volatile boolean cancelled;
+        int consumed;
+        volatile boolean done;
+        final Subscriber<? super R> downstream;
+        long emitted;
+        final ErrorMode errorMode;
+        R item;
+        final Function<? super T, ? extends MaybeSource<? extends R>> mapper;
+        final int prefetch;
+        final SimplePlainQueue<T> queue;
+        volatile int state;
+        Subscription upstream;
+        final AtomicLong requested = new AtomicLong();
+        final AtomicThrowable errors = new AtomicThrowable();
+        final ConcatMapMaybeObserver<R> inner = new ConcatMapMaybeObserver<>(this);
+
+        /* JADX INFO: Access modifiers changed from: package-private */
+        public ConcatMapMaybeSubscriber(Subscriber<? super R> downstream, Function<? super T, ? extends MaybeSource<? extends R>> mapper, int prefetch, ErrorMode errorMode) {
+            this.downstream = downstream;
+            this.mapper = mapper;
+            this.prefetch = prefetch;
+            this.errorMode = errorMode;
+            this.queue = new SpscArrayQueue(prefetch);
+        }
+
+        @Override // io.reactivex.rxjava3.core.FlowableSubscriber
+        public void onSubscribe(Subscription s) {
+            if (SubscriptionHelper.validate(this.upstream, s)) {
+                this.upstream = s;
+                this.downstream.onSubscribe(this);
+                s.request(this.prefetch);
+            }
+        }
+
+        public void onNext(T t) {
+            if (!this.queue.offer(t)) {
+                this.upstream.cancel();
+                onError(new MissingBackpressureException("queue full?!"));
+                return;
+            }
+            drain();
+        }
+
+        public void onError(Throwable t) {
+            if (this.errors.tryAddThrowableOrReport(t)) {
+                if (this.errorMode == ErrorMode.IMMEDIATE) {
+                    this.inner.dispose();
+                }
+                this.done = true;
+                drain();
+            }
+        }
+
+        public void onComplete() {
+            this.done = true;
+            drain();
+        }
+
+        public void request(long n) {
+            BackpressureHelper.add(this.requested, n);
+            drain();
+        }
+
+        public void cancel() {
+            this.cancelled = true;
+            this.upstream.cancel();
+            this.inner.dispose();
+            this.errors.tryTerminateAndReport();
+            if (getAndIncrement() == 0) {
+                this.queue.clear();
+                this.item = null;
+            }
+        }
+
+        void innerSuccess(R item) {
+            this.item = item;
+            this.state = 2;
+            drain();
+        }
+
+        void innerComplete() {
+            this.state = 0;
+            drain();
+        }
+
+        void innerError(Throwable ex) {
+            if (this.errors.tryAddThrowableOrReport(ex)) {
+                if (this.errorMode != ErrorMode.END) {
+                    this.upstream.cancel();
+                }
+                this.state = 0;
+                drain();
+            }
+        }
+
+        /* JADX WARN: Code restructure failed: missing block: B:16:0x003a, code lost:
+            r4.clear();
+            r17.item = null;
+            r5.tryTerminateConsumer(r2);
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:17:0x0042, code lost:
+            return;
+         */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        void drain() {
+            if (getAndIncrement() != 0) {
+                return;
+            }
+            Subscriber<? super R> downstream = this.downstream;
+            ErrorMode errorMode = this.errorMode;
+            SimplePlainQueue<T> queue = this.queue;
+            AtomicThrowable errors = this.errors;
+            AtomicLong requested = this.requested;
+            int i = 1;
+            int limit = this.prefetch - (this.prefetch >> 1);
+            int missed = 1;
+            while (true) {
+                if (this.cancelled) {
+                    queue.clear();
+                    this.item = null;
+                } else {
+                    int s = this.state;
+                    if (errors.get() == null || (errorMode != ErrorMode.IMMEDIATE && (errorMode != ErrorMode.BOUNDARY || s != 0))) {
+                        if (s == 0) {
+                            boolean d = this.done;
+                            T v = queue.poll();
+                            int i2 = v == null ? i : 0;
+                            if (d && i2 != 0) {
+                                errors.tryTerminateConsumer(downstream);
+                                return;
+                            } else if (i2 == 0) {
+                                int c = this.consumed + i;
+                                if (c != limit) {
+                                    this.consumed = c;
+                                } else {
+                                    this.consumed = 0;
+                                    this.upstream.request(limit);
+                                }
+                                try {
+                                    MaybeSource<? extends R> ms = (MaybeSource) Objects.requireNonNull(this.mapper.apply(v), "The mapper returned a null MaybeSource");
+                                    this.state = 1;
+                                    ms.subscribe(this.inner);
+                                } catch (Throwable ex) {
+                                    Exceptions.throwIfFatal(ex);
+                                    this.upstream.cancel();
+                                    queue.clear();
+                                    errors.tryAddThrowableOrReport(ex);
+                                    errors.tryTerminateConsumer(downstream);
+                                    return;
+                                }
+                            }
+                        } else if (s == 2) {
+                            long e = this.emitted;
+                            if (e != requested.get()) {
+                                R w = this.item;
+                                this.item = null;
+                                downstream.onNext(w);
+                                this.emitted = e + 1;
+                                this.state = 0;
+                                i = 1;
+                            }
+                        }
+                    }
+                }
+                missed = addAndGet(-missed);
+                if (missed != 0) {
+                    i = 1;
+                } else {
+                    return;
+                }
+            }
+        }
+
+        /* JADX INFO: Access modifiers changed from: package-private */
+        /* loaded from: /data/np/file-convert/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5.dex */
+        public static final class ConcatMapMaybeObserver<R> extends AtomicReference<Disposable> implements MaybeObserver<R> {
+            private static final long serialVersionUID = -3051469169682093892L;
+            final ConcatMapMaybeSubscriber<?, R> parent;
+
+            ConcatMapMaybeObserver(ConcatMapMaybeSubscriber<?, R> parent) {
+                this.parent = parent;
+            }
+
+            @Override // io.reactivex.rxjava3.core.MaybeObserver, io.reactivex.rxjava3.core.SingleObserver, io.reactivex.rxjava3.core.CompletableObserver
+            public void onSubscribe(Disposable d) {
+                DisposableHelper.replace(this, d);
+            }
+
+            @Override // io.reactivex.rxjava3.core.MaybeObserver, io.reactivex.rxjava3.core.SingleObserver
+            public void onSuccess(R t) {
+                this.parent.innerSuccess(t);
+            }
+
+            @Override // io.reactivex.rxjava3.core.MaybeObserver, io.reactivex.rxjava3.core.SingleObserver, io.reactivex.rxjava3.core.CompletableObserver
+            public void onError(Throwable e) {
+                this.parent.innerError(e);
+            }
+
+            @Override // io.reactivex.rxjava3.core.MaybeObserver, io.reactivex.rxjava3.core.CompletableObserver
+            public void onComplete() {
+                this.parent.innerComplete();
+            }
+
+            void dispose() {
+                DisposableHelper.dispose(this);
+            }
+        }
+    }
+}

@@ -1,0 +1,56 @@
+package io.reactivex.rxjava3.internal.operators.observable;
+
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+
+public final class ObservableIgnoreElements<T> extends AbstractObservableWithUpstream<T, T> {
+    public ObservableIgnoreElements(ObservableSource<T> source) {
+        super(source);
+    }
+
+    @Override // io.reactivex.rxjava3.core.Observable
+    public void subscribeActual(final Observer<? super T> t) {
+        this.source.subscribe(new IgnoreObservable(t));
+    }
+
+    /* loaded from: /data/np/file-convert/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5.dex */
+    static final class IgnoreObservable<T> implements Observer<T>, Disposable {
+        final Observer<? super T> downstream;
+        Disposable upstream;
+
+        IgnoreObservable(Observer<? super T> t) {
+            this.downstream = t;
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onSubscribe(Disposable d) {
+            this.upstream = d;
+            this.downstream.onSubscribe(this);
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onNext(T v) {
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onError(Throwable e) {
+            this.downstream.onError(e);
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onComplete() {
+            this.downstream.onComplete();
+        }
+
+        @Override // io.reactivex.rxjava3.disposables.Disposable
+        public void dispose() {
+            this.upstream.dispose();
+        }
+
+        @Override // io.reactivex.rxjava3.disposables.Disposable
+        public boolean isDisposed() {
+            return this.upstream.isDisposed();
+        }
+    }
+}

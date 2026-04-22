@@ -1,0 +1,69 @@
+package io.reactivex.rxjava3.internal.operators.observable;
+
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.internal.disposables.DisposableHelper;
+
+public final class ObservableSkip<T> extends AbstractObservableWithUpstream<T, T> {
+    final long n;
+
+    public ObservableSkip(ObservableSource<T> source, long n) {
+        super(source);
+        this.n = n;
+    }
+
+    @Override // io.reactivex.rxjava3.core.Observable
+    public void subscribeActual(Observer<? super T> observer) {
+        this.source.subscribe(new SkipObserver(observer, this.n));
+    }
+
+    /* loaded from: /data/np/file-convert/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5/202602280713022b24dde5-650f-44d6-87eb-e24b0df191b5.dex */
+    static final class SkipObserver<T> implements Observer<T>, Disposable {
+        final Observer<? super T> downstream;
+        long remaining;
+        Disposable upstream;
+
+        SkipObserver(Observer<? super T> actual, long n) {
+            this.downstream = actual;
+            this.remaining = n;
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onSubscribe(Disposable d) {
+            if (DisposableHelper.validate(this.upstream, d)) {
+                this.upstream = d;
+                this.downstream.onSubscribe(this);
+            }
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onNext(T t) {
+            if (this.remaining != 0) {
+                this.remaining--;
+            } else {
+                this.downstream.onNext(t);
+            }
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onError(Throwable t) {
+            this.downstream.onError(t);
+        }
+
+        @Override // io.reactivex.rxjava3.core.Observer
+        public void onComplete() {
+            this.downstream.onComplete();
+        }
+
+        @Override // io.reactivex.rxjava3.disposables.Disposable
+        public void dispose() {
+            this.upstream.dispose();
+        }
+
+        @Override // io.reactivex.rxjava3.disposables.Disposable
+        public boolean isDisposed() {
+            return this.upstream.isDisposed();
+        }
+    }
+}

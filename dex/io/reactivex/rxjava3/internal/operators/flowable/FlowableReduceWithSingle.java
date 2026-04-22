@@ -1,0 +1,33 @@
+package io.reactivex.rxjava3.internal.operators.flowable;
+
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.exceptions.Exceptions;
+import io.reactivex.rxjava3.functions.BiFunction;
+import io.reactivex.rxjava3.functions.Supplier;
+import io.reactivex.rxjava3.internal.disposables.EmptyDisposable;
+import io.reactivex.rxjava3.internal.operators.flowable.FlowableReduceSeedSingle;
+import j$.util.Objects;
+import org.reactivestreams.Publisher;
+
+public final class FlowableReduceWithSingle<T, R> extends Single<R> {
+    final BiFunction<R, ? super T, R> reducer;
+    final Supplier<R> seedSupplier;
+    final Publisher<T> source;
+
+    public FlowableReduceWithSingle(Publisher<T> source, Supplier<R> seedSupplier, BiFunction<R, ? super T, R> reducer) {
+        this.source = source;
+        this.seedSupplier = seedSupplier;
+        this.reducer = reducer;
+    }
+
+    @Override // io.reactivex.rxjava3.core.Single
+    protected void subscribeActual(SingleObserver<? super R> observer) {
+        try {
+            this.source.subscribe(new FlowableReduceSeedSingle.ReduceSeedObserver(observer, this.reducer, Objects.requireNonNull(this.seedSupplier.get(), "The seedSupplier returned a null value")));
+        } catch (Throwable ex) {
+            Exceptions.throwIfFatal(ex);
+            EmptyDisposable.error(ex, observer);
+        }
+    }
+}

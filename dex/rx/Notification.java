@@ -1,0 +1,128 @@
+package rx;
+
+import kotlinx.serialization.json.internal.AbstractJsonLexerKt;
+
+public final class Notification<T> {
+    private static final Notification<Void> ON_COMPLETED = new Notification<>(Kind.OnCompleted, null, null);
+    private final Kind kind;
+    private final Throwable throwable;
+    private final T value;
+
+    /* loaded from: /data/np/file-convert/202602280715434a3b7a31-7f03-42ef-8e70-679c858cd1ce/202602280715434a3b7a31-7f03-42ef-8e70-679c858cd1ce.dex */
+    public enum Kind {
+        OnNext,
+        OnError,
+        OnCompleted
+    }
+
+    public static <T> Notification<T> createOnNext(T t) {
+        return new Notification<>(Kind.OnNext, t, null);
+    }
+
+    public static <T> Notification<T> createOnError(Throwable e) {
+        return new Notification<>(Kind.OnError, null, e);
+    }
+
+    public static <T> Notification<T> createOnCompleted() {
+        return (Notification<T>) ON_COMPLETED;
+    }
+
+    @Deprecated
+    public static <T> Notification<T> createOnCompleted(Class<T> type) {
+        return (Notification<T>) ON_COMPLETED;
+    }
+
+    private Notification(Kind kind, T value, Throwable e) {
+        this.value = value;
+        this.throwable = e;
+        this.kind = kind;
+    }
+
+    public Throwable getThrowable() {
+        return this.throwable;
+    }
+
+    public T getValue() {
+        return this.value;
+    }
+
+    public boolean hasValue() {
+        return isOnNext() && this.value != null;
+    }
+
+    public boolean hasThrowable() {
+        return isOnError() && this.throwable != null;
+    }
+
+    public Kind getKind() {
+        return this.kind;
+    }
+
+    public boolean isOnError() {
+        return getKind() == Kind.OnError;
+    }
+
+    public boolean isOnCompleted() {
+        return getKind() == Kind.OnCompleted;
+    }
+
+    public boolean isOnNext() {
+        return getKind() == Kind.OnNext;
+    }
+
+    public void accept(Observer<? super T> observer) {
+        if (this.kind == Kind.OnNext) {
+            observer.onNext(getValue());
+        } else if (this.kind == Kind.OnCompleted) {
+            observer.onCompleted();
+        } else {
+            observer.onError(getThrowable());
+        }
+    }
+
+    public String toString() {
+        StringBuilder str = new StringBuilder(64).append(AbstractJsonLexerKt.BEGIN_LIST).append(super.toString()).append(' ').append(getKind());
+        if (hasValue()) {
+            str.append(' ').append(getValue());
+        }
+        if (hasThrowable()) {
+            str.append(' ').append(getThrowable().getMessage());
+        }
+        str.append(AbstractJsonLexerKt.END_LIST);
+        return str.toString();
+    }
+
+    public int hashCode() {
+        int hash = getKind().hashCode();
+        if (hasValue()) {
+            hash = (hash * 31) + getValue().hashCode();
+        }
+        if (hasThrowable()) {
+            return (hash * 31) + getThrowable().hashCode();
+        }
+        return hash;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Notification<?> notification = (Notification) obj;
+        if (notification.getKind() == getKind()) {
+            if (this.value == notification.value || (this.value != null && this.value.equals(notification.value))) {
+                if (this.throwable != notification.throwable && (this.throwable == null || !this.throwable.equals(notification.throwable))) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+}

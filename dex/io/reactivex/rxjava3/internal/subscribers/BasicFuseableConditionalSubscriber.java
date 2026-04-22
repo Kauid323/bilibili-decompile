@@ -1,0 +1,106 @@
+package io.reactivex.rxjava3.internal.subscribers;
+
+import io.reactivex.rxjava3.exceptions.Exceptions;
+import io.reactivex.rxjava3.internal.fuseable.ConditionalSubscriber;
+import io.reactivex.rxjava3.internal.fuseable.QueueSubscription;
+import io.reactivex.rxjava3.internal.subscriptions.SubscriptionHelper;
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+import org.reactivestreams.Subscription;
+
+public abstract class BasicFuseableConditionalSubscriber<T, R> implements ConditionalSubscriber<T>, QueueSubscription<R> {
+    protected boolean done;
+    protected final ConditionalSubscriber<? super R> downstream;
+    protected QueueSubscription<T> qs;
+    protected int sourceMode;
+    protected Subscription upstream;
+
+    public BasicFuseableConditionalSubscriber(ConditionalSubscriber<? super R> downstream) {
+        this.downstream = downstream;
+    }
+
+    @Override // io.reactivex.rxjava3.core.FlowableSubscriber
+    public final void onSubscribe(Subscription s) {
+        if (SubscriptionHelper.validate(this.upstream, s)) {
+            this.upstream = s;
+            if (s instanceof QueueSubscription) {
+                this.qs = (QueueSubscription) s;
+            }
+            if (beforeDownstream()) {
+                this.downstream.onSubscribe(this);
+                afterDownstream();
+            }
+        }
+    }
+
+    protected boolean beforeDownstream() {
+        return true;
+    }
+
+    protected void afterDownstream() {
+    }
+
+    public void onError(Throwable t) {
+        if (this.done) {
+            RxJavaPlugins.onError(t);
+            return;
+        }
+        this.done = true;
+        this.downstream.onError(t);
+    }
+
+    /* JADX INFO: Access modifiers changed from: protected */
+    public final void fail(Throwable t) {
+        Exceptions.throwIfFatal(t);
+        this.upstream.cancel();
+        onError(t);
+    }
+
+    public void onComplete() {
+        if (this.done) {
+            return;
+        }
+        this.done = true;
+        this.downstream.onComplete();
+    }
+
+    /* JADX INFO: Access modifiers changed from: protected */
+    public final int transitiveBoundaryFusion(int mode) {
+        QueueSubscription<T> qs = this.qs;
+        if (qs != null && (mode & 4) == 0) {
+            int m = qs.requestFusion(mode);
+            if (m != 0) {
+                this.sourceMode = m;
+            }
+            return m;
+        }
+        return 0;
+    }
+
+    public void request(long n) {
+        this.upstream.request(n);
+    }
+
+    public void cancel() {
+        this.upstream.cancel();
+    }
+
+    @Override // io.reactivex.rxjava3.internal.fuseable.SimpleQueue
+    public boolean isEmpty() {
+        return this.qs.isEmpty();
+    }
+
+    @Override // io.reactivex.rxjava3.internal.fuseable.SimpleQueue
+    public void clear() {
+        this.qs.clear();
+    }
+
+    @Override // io.reactivex.rxjava3.internal.fuseable.SimpleQueue
+    public final boolean offer(R e) {
+        throw new UnsupportedOperationException("Should not be called!");
+    }
+
+    @Override // io.reactivex.rxjava3.internal.fuseable.SimpleQueue
+    public final boolean offer(R v1, R v2) {
+        throw new UnsupportedOperationException("Should not be called!");
+    }
+}
