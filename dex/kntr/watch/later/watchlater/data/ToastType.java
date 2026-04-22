@@ -1,0 +1,42 @@
+package kntr.watch.later.watchlater.data;
+
+import kntr.app.upcomingEpisode.ConstantsKt;
+import kotlin.Metadata;
+
+/* compiled from: WLState.kt */
+@Metadata(d1 = {"\u0000\u001a\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bp\u0018\u00002\u00020\u0001:\u0003\u0002\u0003\u0004\u0082\u0001\u0003\u0005\u0006\u0007¨\u0006\bÀ\u0006\u0003"}, d2 = {"Lkntr/watch/later/watchlater/data/ToastType;", "", "NetworkError", "OperateSuccess", "OperateFailed", "Lkntr/watch/later/watchlater/data/ToastType$NetworkError;", "Lkntr/watch/later/watchlater/data/ToastType$OperateFailed;", "Lkntr/watch/later/watchlater/data/ToastType$OperateSuccess;", "watch_later_debug"}, k = 1, mv = {2, 2, 0}, xi = ConstantsKt.OGV_UPDATE_CALENDAR_CARD_COVER_WIDTH)
+public interface ToastType {
+
+    /* compiled from: WLState.kt */
+    @Metadata(d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\bÇ\u0002\u0018\u00002\u00020\u0001B\t\b\u0002¢\u0006\u0004\b\u0002\u0010\u0003¨\u0006\u0004"}, d2 = {"Lkntr/watch/later/watchlater/data/ToastType$NetworkError;", "Lkntr/watch/later/watchlater/data/ToastType;", "<init>", "()V", "watch_later_debug"}, k = 1, mv = {2, 2, 0}, xi = ConstantsKt.OGV_UPDATE_CALENDAR_CARD_COVER_WIDTH)
+    /* loaded from: /data/np/file-convert/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135.dex */
+    public static final class NetworkError implements ToastType {
+        public static final int $stable = 0;
+        public static final NetworkError INSTANCE = new NetworkError();
+
+        private NetworkError() {
+        }
+    }
+
+    /* compiled from: WLState.kt */
+    @Metadata(d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\bÇ\u0002\u0018\u00002\u00020\u0001B\t\b\u0002¢\u0006\u0004\b\u0002\u0010\u0003¨\u0006\u0004"}, d2 = {"Lkntr/watch/later/watchlater/data/ToastType$OperateSuccess;", "Lkntr/watch/later/watchlater/data/ToastType;", "<init>", "()V", "watch_later_debug"}, k = 1, mv = {2, 2, 0}, xi = ConstantsKt.OGV_UPDATE_CALENDAR_CARD_COVER_WIDTH)
+    /* loaded from: /data/np/file-convert/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135.dex */
+    public static final class OperateSuccess implements ToastType {
+        public static final int $stable = 0;
+        public static final OperateSuccess INSTANCE = new OperateSuccess();
+
+        private OperateSuccess() {
+        }
+    }
+
+    /* compiled from: WLState.kt */
+    @Metadata(d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\bÇ\u0002\u0018\u00002\u00020\u0001B\t\b\u0002¢\u0006\u0004\b\u0002\u0010\u0003¨\u0006\u0004"}, d2 = {"Lkntr/watch/later/watchlater/data/ToastType$OperateFailed;", "Lkntr/watch/later/watchlater/data/ToastType;", "<init>", "()V", "watch_later_debug"}, k = 1, mv = {2, 2, 0}, xi = ConstantsKt.OGV_UPDATE_CALENDAR_CARD_COVER_WIDTH)
+    /* loaded from: /data/np/file-convert/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135/2026022807143238e8ee96-c751-4ccd-b696-f1bdbd379135.dex */
+    public static final class OperateFailed implements ToastType {
+        public static final int $stable = 0;
+        public static final OperateFailed INSTANCE = new OperateFailed();
+
+        private OperateFailed() {
+        }
+    }
+}

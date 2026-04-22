@@ -1,0 +1,9 @@
+package kntr.app.ad.protocol.adextra;
+
+import kntr.app.live.room.recommend.RoomRecommendViewModel;
+import kotlin.Metadata;
+
+/* compiled from: IAdExtraQuery.kt */
+@Metadata(d1 = {"\u0000F\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\bv\u0018\u00002\u00020\u0001\u0082\u0001\u000f\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010¨\u0006\u0011À\u0006\u0003"}, d2 = {"Lkntr/app/ad/protocol/adextra/IAdExtraQuery;", RoomRecommendViewModel.EMPTY_CURSOR, "Lkntr/app/ad/protocol/adextra/AdExtraDefaultQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraFollowingCommentQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraFollowingDetailQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraRewardComponentQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraRewardSearchQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraStoryCommentQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraStoryFeedQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraStoryFlyCartQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraStoryGoodsQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraStoryNatureCartQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraUgcCommentQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraUgcDanmakuQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraUgcDetailQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraUgcEndPageQuery;", "Lkntr/app/ad/protocol/adextra/AdExtraUgcMerchandiseQuery;", "protocol_debug"}, k = 1, mv = {2, 2, 0}, xi = 48)
+public interface IAdExtraQuery {
+}

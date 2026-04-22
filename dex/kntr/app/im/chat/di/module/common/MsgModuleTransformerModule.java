@@ -1,0 +1,55 @@
+package kntr.app.im.chat.di.module.common;
+
+import com.bapis.bilibili.app.im.v1.KMsgModule;
+import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.IntoMap;
+import dagger.multibindings.StringKey;
+import java.util.Map;
+import kntr.app.im.chat.core.di.ChatScope;
+import kntr.app.im.chat.core.di.ChatSerializationModule;
+import kntr.app.im.chat.core.model.MsgModule;
+import kntr.app.im.chat.network.MsgModuleTransformer;
+import kntr.app.im.chat.network.MsgModuleTransformers;
+import kntr.app.im.chat.utils.UnknownModuleTransformer;
+import kntr.app.live.room.recommend.RoomRecommendViewModel;
+import kotlin.Metadata;
+import kotlin.jvm.internal.Intrinsics;
+import kotlin.jvm.internal.Reflection;
+import kotlin.reflect.KClass;
+import kotlinx.serialization.KSerializer;
+import kotlinx.serialization.modules.PolymorphicModuleBuilder;
+import kotlinx.serialization.modules.SerializersModule;
+import kotlinx.serialization.modules.SerializersModuleBuilder;
+
+/* compiled from: MsgModuleTransformerSet.kt */
+@Metadata(d1 = {"\u00002\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010$\n\u0002\u0010\u000e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\bÇ\u0002\u0018\u00002\u00020\u0001B\t\b\u0002¢\u0006\u0004\b\u0002\u0010\u0003J-\u0010\u0004\u001a\u00020\u00052#\u0010\u0006\u001a\u001f\u0012\u0004\u0012\u00020\b\u0012\u0015\u0012\u0013\u0012\u0004\u0012\u00020\n\u0012\u0004\u0012\u00020\u000b0\t¢\u0006\u0002\b\f0\u0007H\u0007J\b\u0010\r\u001a\u00020\u000eH\u0007¨\u0006\u000f"}, d2 = {"Lkntr/app/im/chat/di/module/common/MsgModuleTransformerModule;", RoomRecommendViewModel.EMPTY_CURSOR, "<init>", "()V", "provideModuleTransformer", "Lkntr/app/im/chat/network/MsgModuleTransformers;", "map", RoomRecommendViewModel.EMPTY_CURSOR, RoomRecommendViewModel.EMPTY_CURSOR, "Lkntr/app/im/chat/network/MsgModuleTransformer;", "Lcom/bapis/bilibili/app/im/v1/KMsgModule$IModule;", "Lkntr/app/im/chat/core/model/MsgModule;", "Lkotlin/jvm/JvmSuppressWildcards;", "provideUnknownModuleSerializer", "Lkotlinx/serialization/modules/SerializersModule;", "biz_debug"}, k = 1, mv = {2, 2, 0}, xi = 48)
+@Module(includes = {}, subcomponents = {})
+public final class MsgModuleTransformerModule {
+    public static final int $stable = 0;
+    public static final MsgModuleTransformerModule INSTANCE = new MsgModuleTransformerModule();
+
+    private MsgModuleTransformerModule() {
+    }
+
+    @Provides
+    @ChatScope
+    public final MsgModuleTransformers provideModuleTransformer(Map<String, MsgModuleTransformer<KMsgModule.IModule, MsgModule>> map) {
+        Intrinsics.checkNotNullParameter(map, "map");
+        return new MsgModuleTransformers(map, new UnknownModuleTransformer());
+    }
+
+    @Provides
+    @StringKey("UnknownModule")
+    @IntoMap
+    @ChatSerializationModule
+    public final SerializersModule provideUnknownModuleSerializer() {
+        SerializersModuleBuilder builder$iv = new SerializersModuleBuilder();
+        KClass baseClass$iv = Reflection.getOrCreateKotlinClass(MsgModule.class);
+        PolymorphicModuleBuilder builder$iv2 = new PolymorphicModuleBuilder(baseClass$iv, (KSerializer) null);
+        KClass clazz$iv = Reflection.getOrCreateKotlinClass(MsgModule.UnknownModule.class);
+        builder$iv2.subclass(clazz$iv, MsgModule.UnknownModule.INSTANCE.serializer());
+        builder$iv2.buildTo(builder$iv);
+        return builder$iv.build();
+    }
+}

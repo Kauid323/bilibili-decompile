@@ -1,0 +1,83 @@
+package kntr.app.tribee.search.page;
+
+import androidx.compose.foundation.lazy.LazyListState;
+import androidx.compose.runtime.SnapshotStateKt;
+import androidx.compose.ui.focus.FocusManager;
+import kntr.app.upcomingEpisode.ConstantsKt;
+import kotlin.Metadata;
+import kotlin.ResultKt;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.intrinsics.IntrinsicsKt;
+import kotlin.coroutines.jvm.internal.DebugMetadata;
+import kotlin.coroutines.jvm.internal.SuspendLambda;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function2;
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.flow.Flow;
+import kotlinx.coroutines.flow.FlowCollector;
+
+/* JADX INFO: Access modifiers changed from: package-private */
+/* compiled from: TribeeSearchFindPageContent.kt */
+@Metadata(d1 = {"\u0000\n\n\u0000\n\u0002\u0010\u0002\n\u0002\u0018\u0002\u0010\u0000\u001a\u00020\u0001*\u00020\u0002H\n"}, d2 = {"<anonymous>", "", "Lkotlinx/coroutines/CoroutineScope;"}, k = 3, mv = {2, 2, 0}, xi = ConstantsKt.OGV_UPDATE_CALENDAR_CARD_COVER_WIDTH)
+@DebugMetadata(c = "kntr.app.tribee.search.page.TribeeSearchFindPageContentKt$SearchHistoryContent$4$1", f = "TribeeSearchFindPageContent.kt", i = {}, l = {214}, m = "invokeSuspend", n = {}, s = {}, v = 1)
+public final class TribeeSearchFindPageContentKt$SearchHistoryContent$4$1 extends SuspendLambda implements Function2<CoroutineScope, Continuation<? super Unit>, Object> {
+    final /* synthetic */ FocusManager $focusManager;
+    final /* synthetic */ LazyListState $lazyListState;
+    int label;
+
+    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public TribeeSearchFindPageContentKt$SearchHistoryContent$4$1(LazyListState lazyListState, FocusManager focusManager, Continuation<? super TribeeSearchFindPageContentKt$SearchHistoryContent$4$1> continuation) {
+        super(2, continuation);
+        this.$lazyListState = lazyListState;
+        this.$focusManager = focusManager;
+    }
+
+    public final Continuation<Unit> create(Object obj, Continuation<?> continuation) {
+        return new TribeeSearchFindPageContentKt$SearchHistoryContent$4$1(this.$lazyListState, this.$focusManager, continuation);
+    }
+
+    public final Object invoke(CoroutineScope coroutineScope, Continuation<? super Unit> continuation) {
+        return create(coroutineScope, continuation).invokeSuspend(Unit.INSTANCE);
+    }
+
+    public final Object invokeSuspend(Object $result) {
+        Object coroutine_suspended = IntrinsicsKt.getCOROUTINE_SUSPENDED();
+        switch (this.label) {
+            case 0:
+                ResultKt.throwOnFailure($result);
+                final LazyListState lazyListState = this.$lazyListState;
+                Flow snapshotFlow = SnapshotStateKt.snapshotFlow(new Function0() { // from class: kntr.app.tribee.search.page.TribeeSearchFindPageContentKt$SearchHistoryContent$4$1$$ExternalSyntheticLambda0
+                    public final Object invoke() {
+                        boolean isScrollInProgress;
+                        isScrollInProgress = lazyListState.isScrollInProgress();
+                        return Boolean.valueOf(isScrollInProgress);
+                    }
+                });
+                final FocusManager focusManager = this.$focusManager;
+                this.label = 1;
+                if (snapshotFlow.collect(new FlowCollector() { // from class: kntr.app.tribee.search.page.TribeeSearchFindPageContentKt$SearchHistoryContent$4$1.2
+                    public /* bridge */ /* synthetic */ Object emit(Object value, Continuation $completion) {
+                        return emit(((Boolean) value).booleanValue(), $completion);
+                    }
+
+                    public final Object emit(boolean isScrolling, Continuation<? super Unit> continuation) {
+                        if (isScrolling) {
+                            FocusManager.-CC.clearFocus$default(focusManager, false, 1, (Object) null);
+                        }
+                        return Unit.INSTANCE;
+                    }
+                }, (Continuation) this) == coroutine_suspended) {
+                    return coroutine_suspended;
+                }
+                break;
+            case 1:
+                ResultKt.throwOnFailure($result);
+                break;
+            default:
+                throw new IllegalStateException("call to 'resume' before 'invoke' with coroutine");
+        }
+        return Unit.INSTANCE;
+    }
+}

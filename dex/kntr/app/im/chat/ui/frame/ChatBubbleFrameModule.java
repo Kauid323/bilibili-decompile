@@ -1,0 +1,30 @@
+package kntr.app.im.chat.ui.frame;
+
+import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.IntoMap;
+import dagger.multibindings.StringKey;
+import kntr.app.im.chat.core.model.MsgFrame;
+import kntr.app.im.chat.ui.builder.ChatMsgFrameBuilder;
+import kntr.app.live.room.recommend.RoomRecommendViewModel;
+import kotlin.Metadata;
+import kotlin.jvm.internal.Intrinsics;
+
+/* compiled from: ChatBubbleFrame.kt */
+@Metadata(d1 = {"\u0000\u001c\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\bÇ\u0002\u0018\u00002\u00020\u0001B\t\b\u0002¢\u0006\u0004\b\u0002\u0010\u0003J\u0016\u0010\u0004\u001a\b\u0012\u0004\u0012\u00020\u00060\u00052\u0006\u0010\u0007\u001a\u00020\bH\u0007¨\u0006\t"}, d2 = {"Lkntr/app/im/chat/ui/frame/ChatBubbleFrameModule;", RoomRecommendViewModel.EMPTY_CURSOR, "<init>", "()V", "bindChatBubbleFrameBuilder", "Lkntr/app/im/chat/ui/builder/ChatMsgFrameBuilder;", "Lkntr/app/im/chat/core/model/MsgFrame;", "impl", "Lkntr/app/im/chat/ui/frame/ChatBubbleFrameBuilder;", "ui_debug"}, k = 1, mv = {2, 2, 0}, xi = 48)
+@Module(includes = {}, subcomponents = {})
+public final class ChatBubbleFrameModule {
+    public static final int $stable = 0;
+    public static final ChatBubbleFrameModule INSTANCE = new ChatBubbleFrameModule();
+
+    private ChatBubbleFrameModule() {
+    }
+
+    @Provides
+    @IntoMap
+    @StringKey("ChatBubbleFrame")
+    public final ChatMsgFrameBuilder<MsgFrame> bindChatBubbleFrameBuilder(ChatBubbleFrameBuilder impl) {
+        Intrinsics.checkNotNullParameter(impl, "impl");
+        return impl;
+    }
+}
